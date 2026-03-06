@@ -1,0 +1,818 @@
+---
+title: "free_study_cloud"
+output:
+  html_document: default
+---
+
+```{r}
+##LOADING PACKAGES
+library(tidyverse)
+#library(gtools)
+#library(plyr)
+#library(magrittr)
+library(dplyr)
+#library(lme4)
+library(ggplot2)
+#library(tidyr)
+#library(stringr)
+```
+
+```{r}
+#LOADING IN DATA
+multmerge = function(mypath){
+  filenames=list.files(path=mypath, full.names=TRUE)
+  datalist = lapply(filenames, function(x){read.csv(file=x,header=T)})
+  Reduce(function(x,y) {merge(x,y,all = TRUE)}, datalist)
+}
+full_data = multmerge("/Users/kyliealberts/Desktop/UCLA_stuff_2024/All_Data/all_free_study_data/FS_1y/Data/FTnewOAoa-Data/Output")
+
+free_data_y_f <- full_data
+write.csv(free_data_y_f, file= "free_data_y_fs.csv")
+```
+
+```{r}
+#LOADING IN DATA
+multmerge = function(mypath){
+  filenames=list.files(path=mypath, full.names=TRUE)
+  datalist = lapply(filenames, function(x){read.csv(file=x,header=T)})
+  Reduce(function(x,y) {merge(x,y,all = TRUE)}, datalist)
+}
+full_data = multmerge("/Users/kyliealberts/Desktop/UCLA_stuff_2024/All_Data/all_free_study_data/FS_2y/Data/FTnewOAoa-Data/Output")
+
+free_data_y_nf <- full_data
+write.csv(free_data_y_nf, file= "free_data_y_nfs.csv")
+```
+
+```{r}
+#LOADING IN DATA
+multmerge = function(mypath){
+  filenames=list.files(path=mypath, full.names=TRUE)
+  datalist = lapply(filenames, function(x){read.csv(file=x,header=T)})
+  Reduce(function(x,y) {merge(x,y,all = TRUE)}, datalist)
+}
+full_data = multmerge("/Users/kyliealberts/Desktop/UCLA_stuff_2024/All_Data/all_free_study_data/FS_1o/Data/FTnewOAoa-Data/Output")
+
+free_data_o_f <- full_data
+write.csv(free_data_o_f, file= "free_data_o_fs.csv")
+```
+
+```{r}
+
+#LOADING IN DATA
+multmerge = function(mypath){
+  filenames=list.files(path=mypath, full.names=TRUE)
+  datalist = lapply(filenames, function(x){read.csv(file=x,header=T)})
+  Reduce(function(x,y) {merge(x,y,all = TRUE)}, datalist)
+}
+full_data = multmerge("/Users/kyliealberts/Desktop/UCLA_stuff_2024/All_Data/all_free_study_data/FS_2o/Data/FTnewOAoa-Data/Output")
+
+free_data_o_nf <- full_data
+write.csv(free_data_o_nf, file= "free_data_o_nfs.csv")
+```
+
+```{r}
+FS_1y <- read.csv("/Users/kyliealberts/Desktop/UCLA_stuff_2024/All_Data/all_free_study_data/FS_1y/Data/FTnewOAoa-Data/DemographicsData.csv")
+FS_2y <- read.csv("/Users/kyliealberts/Desktop/UCLA_stuff_2024/All_Data/all_free_study_data/FS_2y/Data/FTnewOAoa-Data/DemographicsData.csv")
+FS_1o <- read.csv("/Users/kyliealberts/Desktop/UCLA_stuff_2024/All_Data/all_free_study_data/FS_1o/Data/FTnewOAoa-Data/DemographicsData.csv")
+FS_2o <- read.csv("/Users/kyliealberts/Desktop/UCLA_stuff_2024/All_Data/all_free_study_data/FS_2o/Data/FTnewOAoa-Data/DemographicsData.csv")
+
+FS_1y$agegroup <- 'Young'
+FS_2y$agegroup <- 'Young'
+FS_1o$agegroup <- 'Older'
+FS_2o$agegroup <- 'Older'
+
+FS_1y$study <- 'free'
+FS_2y$study <- 'no free'
+FS_1o$study <- 'free'
+FS_2o$study <- 'no free'
+
+FS_1y <- subset(FS_1y, FS_1y$Username!= "testWorker")
+FS_2y <- subset(FS_2y, FS_2y$Username!= "testWorker")
+FS_1o <- subset(FS_1o, FS_1o$Username!= "testWorker")
+FS_2o <- subset(FS_2o, FS_2o$Username!= "testWorker")
+
+FS_demo_young <- rbind(FS_1y, FS_2y)
+FS_demo_old <- rbind(FS_1o, FS_2o)
+
+mean(FS_demo_young$Age) 
+sd(FS_demo_young$Age)
+
+range(FS_demo_young$Age)
+
+
+
+mean(FS_demo_old$Age) 
+sd(FS_demo_old$Age)
+
+range(FS_demo_old$Age)
+
+#counts <- ddply(FS_demo_young, .(FS_demo_young$ID, FS_demo_young$study), nrow)
+
+#names(counts) <- c("ID", "study", "Freq")
+#data.frame(table(counts$study))
+
+#counts_o <- ddply(FS_demo_old, .(FS_demo_old$ID, FS_demo_old$study), nrow)
+#names(counts_o) <- c("ID", "study", "Freq")
+#data.frame(table(counts_o$study))
+```
+
+
+
+```{r}
+free_data_y_f$agegroup <- 'Young'
+free_data_y_nf$agegroup <- 'Young'
+free_data_o_f$agegroup <- 'Older'
+free_data_o_nf$agegroup <- 'Older'
+
+free_data_all <- rbind(free_data_y_f, free_data_y_nf)
+
+free_data_all <- rbind(free_data_all, free_data_o_f)
+
+free_data_all_ <- rbind(free_data_all, free_data_o_nf)
+
+free_data_all<- free_data_all_ %>%
+  select(ID, Order.File, Procedure.Text, Response.RT, Response.Response, agegroup)
+
+
+free_data_all <- mutate(free_data_all, 
+                    Question = ifelse(str_detect(free_data_all$Procedure.Text, "many"), "occurance","Other"))
+
+free_data_all_howmany <- free_data_all %>% subset(Question == "occurance")
+free_data_all_howmany <- free_data_all_howmany %>% distinct()
+
+write.csv(free_data_all_howmany, file= "free_data_all_cloud_howmany.csv")
+
+free_data_all_hm_revised <- read.csv("/Users/kyliealberts/Desktop/UCLAstuff/Free Study/free_data_all_cloud_howmany.csv")
+
+free_data_all_info <- mutate(free_data_all, 
+                    Question = ifelse(str_detect(free_data_all$Procedure.Text, "type"), "info","Other"))
+
+free_data_all_info <- free_data_all_info %>% subset(Question == "info")
+free_data_all_info <- free_data_all_info %>% distinct()
+
+write.csv(free_data_all_info, file= "free_data_all_cloud_info.csv")
+
+free_data_all_info_revised <- read.csv("/Users/kyliealberts/Desktop/UCLAstuff/Free Study/free_data_all_cloud_info.csv")
+
+free_data_all <- mutate(free_data_all, 
+                    Question = ifelse(str_detect(free_data_all$Procedure.Text, "many"), "occurance","Other"))
+
+free_data_all_howmany <- free_data_all %>% subset(Question == "occurance")
+free_data_all_howmany <- free_data_all_howmany %>% distinct()
+
+free_data_all_incline <- mutate(free_data_all, 
+                    Question = ifelse(str_detect(free_data_all$Procedure.Text, "inclined"), "occurance","Other"))
+
+free_data_all_incline <- free_data_all_incline %>% subset(Question == "occurance")
+free_data_all_incline <- free_data_all_incline %>% distinct()
+
+write.csv(free_data_all_incline, file= "free_data_all_cloud_incline.csv")
+
+free_data_all_incline_revised <- read.csv("/Users/kyliealberts/Desktop/UCLAstuff/Free Study/free_data_all_cloud_incline.csv")
+
+
+```
+
+```{r}
+matching_ids <- FS_demo_old$ID %in% free_data_all_hm_revised$ID
+
+# Subset FS_demo_old to keep only the rows with matching IDs
+FS_demo_old_filtered <- FS_demo_old[matching_ids, ]
+
+mean(FS_demo_old_filtered$Age) 
+sd(FS_demo_old_filtered$Age)
+
+range(FS_demo_old_filtered$Age)
+
+#counts <- ddply(FS_demo_old_filtered, .(FS_demo_old_filtered$ID, FS_demo_old_filtered$study, FS_demo_old_filtered$Gender), nrow)
+
+#names(counts) <- c("ID", "study", "Gender","Freq")
+#data.frame(table(counts$study))
+#data.frame(table(counts$Gender))
+```
+```{r}
+matching_ids_y <- FS_demo_young$ID %in% free_data_all_hm_revised$ID
+
+# Subset FS_demo_old to keep only the rows with matching IDs
+FS_demo_young_filtered <- FS_demo_young[matching_ids_y, ]
+
+mean(FS_demo_young_filtered$Age) 
+sd(FS_demo_young_filtered$Age)
+
+range(FS_demo_young_filtered$Age)
+
+#counts <- ddply(FS_demo_young_filtered, .(FS_demo_young_filtered$ID, FS_demo_young_filtered$study, FS_demo_young_filtered$Gender), nrow)
+
+#names(counts) <- c("ID", "study", "Gender", "Freq")
+#data.frame(table(counts$study))
+#data.frame(table(counts$Gender))
+```
+
+```{r}
+#how many graph
+stand_figure_howmany_all <- data.frame(
+  Study=c("Free", "No Free", "Free", "No Free"),
+  Age = c("Young", "Young", "Older", "Older"),
+  sd=c(.297, .320, .284, .356)
+)
+
+#free_data_all_hm_revised <- na.omit(free_data_all_hm_revised)
+
+figure_free_hm <- free_data_all_hm_revised %>% 
+  select(Order.File, Response.Response, agegroup) %>% as.data.frame()
+
+figure_free_hm <- na.omit(figure_free_hm)
+
+#as.numeric(figure_free$Response.Response)
+
+average_howmany_all <- figure_free_hm %>% 
+  group_by(Order.File, agegroup) %>% summarise_at(vars(Response.Response), list(Response.Response = mean))
+
+colnames(average_howmany_all)[colnames(average_howmany_all) == 'Order.File'] <- 'Study'
+colnames(average_howmany_all)[colnames(average_howmany_all) == 'agegroup'] <- 'Age'
+average_howmany_all[average_howmany_all == "procedure_free.csv" ] <- "Free"
+average_howmany_all[average_howmany_all == "procedure.csv"] <- "No Free"
+
+#average_$Time <- factor(average_honesty_o$Time, levels = c("Pre", "Post"))
+
+average_figure_all_hm<- merge(average_howmany_all, stand_figure_howmany_all, by=c("Study","Age"))
+
+average_figure_all_hm_fig <- ggplot(data=average_figure_all_hm, aes(x=Study, y=Response.Response, fill=Age)) +
+geom_bar(stat="identity", position=position_dodge(), col = "black")+
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(x = "Study", y = "Number of times 'free' was recalled", 
+       title= "Recalling 'free'") +
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'),legend.direction = "horizontal",legend.position = c(0.6, 0.8))+
+  scale_fill_manual(values = c("black", "white"),name="")+ 
+#theme_minimal() +
+  geom_errorbar(aes(ymin=Response.Response-sd, ymax=Response.Response+sd), width=0.2, colour="gray27", position=position_dodge(.9)) +
+  ylim(0,6)+
+    geom_hline(yintercept = c(3, 0), linetype = "dashed", color = c("pink", "lightblue"))
+
+average_figure_all_hm_fig
+```
+
+```{r}
+
+average_figure_all_hm$Age <- factor(average_figure_all_hm$Age, levels = c("Young", "Older"))
+average_figure_all_hm_fig_col <- ggplot(data=average_figure_all_hm, aes(x=Age, y=Response.Response, fill=Study)) +
+geom_bar(stat="identity", color= "black", position=position_dodge())+
+  guides(fill = guide_legend(reverse = FALSE)) +
+  labs(x = "Age", y = "Number of times 'free' was recalled") +
+scale_fill_manual(values=c("gray70",
+                             "black"))+
+theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'), axis.line.x = element_line(color="black", size = .3), axis.line.y = element_line(color="black", size = .3), axis.ticks.x=element_blank())+
+  geom_errorbar(aes(ymin=Response.Response-sd, ymax=Response.Response+sd), width=0.2, colour="gray27", position=position_dodge(.9)) +
+  ylim(0,6)
+
+average_figure_all_hm_fig_col
+```
+
+```{r}
+colnames(free_data_all_incline_revised)[colnames(free_data_all_incline_revised) == 'Order.File'] <- 'Study'
+colnames(free_data_all_incline_revised)[colnames(free_data_all_incline_revised) == 'inclined'] <- 'Type'
+free_data_all_incline_revised[free_data_all_incline_revised == "procedure_free.csv" ] <- "Free"
+free_data_all_incline_revised[free_data_all_incline_revised == "procedure.csv"] <- "No Free"
+colnames(free_data_all_incline_revised)[colnames(free_data_all_incline_revised) == 'incline'] <- 'Incline'
+colnames(free_data_all_incline_revised)[colnames(free_data_all_incline_revised) == 'agegroup'] <- 'Age'
+
+figure_free_hm <- free_data_all_hm_revised %>% 
+  select(ID, Order.File, Response.Response, agegroup) %>% as.data.frame()
+
+figure_free_incline <- free_data_all_incline_revised %>% 
+  select(ID, Study, Incline, Age) %>% as.data.frame()
+
+
+average_figure_all_incline<- merge(figure_free_hm, figure_free_incline, by=c("ID"))
+
+
+free_data_all_incline_revised <- subset(average_figure_all_incline, average_figure_all_incline$Study!= "No Free")
+
+free_data_all_incline_revised <- na.omit(free_data_all_incline_revised)
+
+write.csv(free_data_all_incline_revised, "free_data_all_incline_revised.csv")
+
+average_free_all_incline_revised_free <- free_data_all_incline_revised %>% 
+  group_by(Incline, Age) %>% summarise_at(vars(Response.Response), list(Response.Response = mean))
+
+stand_incline_free <- data.frame(
+  Incline=c("Not Inclined", "Unsure", "Inclined", "Not Inclined", "Unsure", "Inclined"),
+  Age = c("Young", "Young", "Young", "Older", "Older", "Older"),
+  sd=c(.391, .68, .681, .339, .27, 1.4)
+
+)
+average_free_all_incline_revised_free$Incline<-as.character(average_free_all_incline_revised_free$Incline)
+average_free_all_incline_revised_free[average_free_all_incline_revised_free == "0" ] <- "Not Inclined"
+average_free_all_incline_revised_free[average_free_all_incline_revised_free == "1" ] <- "Unsure"
+average_free_all_incline_revised_free[average_free_all_incline_revised_free == "2" ] <- "Inclined"
+average_free_all_incline_revised_free[average_free_all_incline_revised_free == "3" ] <- "Very Inclined"
+
+write.csv(average_free_all_incline_revised_free, "average_free_all_incline_revised_free.csv")
+
+average_free_all_incline_revised_free <- read.csv("/Users/kyliealberts/Desktop/UCLAstuff/Free Study/average_free_all_incline_revised_free.csv")
+
+average_figure_all_incline_free<- merge(average_free_all_incline_revised_free, stand_incline_free, by=c("Incline","Age"))
+
+average_figure_all_incline_free$Age <- factor(average_figure_all_incline_free$Age, levels = c("Young", "Older"))
+
+average_figure_all_incline_free$Incline <- factor(average_figure_all_incline_free$Incline, levels = c("Not Inclined", "Unsure", "Inclined"))
+
+ggplot(data=average_figure_all_incline_free, aes(x=Age, y=Response.Response, fill=Incline)) +
+geom_bar(stat="identity", color= "black", position=position_dodge())+
+  guides(fill = guide_legend(reverse = FALSE)) +
+  labs(x = "Age", y = "Number of times 'free' was recalled", 
+       title= "Recalling 'free' in Free Condition") +
+scale_fill_manual(values=c("pink",
+                             "lightblue", "#CBC3E3"))+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))+
+  geom_errorbar(aes(ymin=Response.Response-sd, ymax=Response.Response+sd), width=0.2, colour="black", position=position_dodge(.9)) +
+  ylim(0,6)+
+    geom_hline(yintercept = c(3), linetype = "dashed", color = c("black"))
+
+free_data_all_incline_revised$Incline<-as.character(free_data_all_incline_revised$Incline)
+free_data_all_incline_revised$Incline[free_data_all_incline_revised$Incline == "0" ] <- "Not Inclined"
+free_data_all_incline_revised$Incline[free_data_all_incline_revised$Incline == "1" ] <- "Unsure"
+free_data_all_incline_revised$Incline[free_data_all_incline_revised$Incline == "2" ] <- "Inclined"
+#free_data_all_incline_revised[free_data_all_incline_revised == "3" ] <- "Very Inclined"
+
+
+free_data_all_incline_revised_o <- subset(free_data_all_incline_revised, free_data_all_incline_revised$Age!= "Young") %>% drop_na()
+
+free_data_all_incline_revised_y <- subset(free_data_all_incline_revised, free_data_all_incline_revised$Age!= "Older") %>% drop_na()
+
+free_data_all_incline_revised_o$Incline <- factor(free_data_all_incline_revised_o$Incline, levels = c("Not Inclined", "Unsure", "Inclined"))
+
+free_data_all_incline_revised_y$Incline <- factor(free_data_all_incline_revised_y$Incline, levels = c("Not Inclined", "Unsure", "Inclined"))
+
+free_data_all_incline_revised_o <- free_data_all_incline_revised_o %>% drop_na()
+free_data_all_incline_revised_y <- free_data_all_incline_revised_y %>% drop_na()
+
+figure_o<- ggplot(free_data_all_incline_revised_o, aes(x= factor(Incline), y=Response.Response, fill= factor(Incline))) + 
+  geom_violin(trim=FALSE) + scale_fill_manual(values=c("pink",
+                             "lightblue", "#CBC3E3"))+
+  labs(title="Inclined in Free Study for Older Adults") + geom_jitter(shape=16, position=position_jitter(0.2))+
+  labs(x = "Inclination", y = "Number of times 'free' was recalled", 
+       title= "Recalling 'free' in Free Condition for Older Adults", fill = "Incline") +
+    geom_hline(yintercept = c(3), linetype = "dashed", color = c("black"))+ylim(0,20)+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))
+
+figure_o
+
+figure_y<- ggplot(free_data_all_incline_revised_y, aes(x= factor(Incline), y=Response.Response, fill= factor(Incline))) + 
+  geom_violin(trim=FALSE) + scale_fill_manual(values=c("pink",
+                             "lightblue", "#CBC3E3"))+
+  labs(title="Inclined in Free Study for Young Adults") + geom_jitter(shape=16, position=position_jitter(0.2))+
+  labs(x = "Inclination", y = "Number of times 'free' was recalled", 
+       title= "Recalling 'free' in Free Condition for Young Adults", fill = "Incline") +
+    geom_hline(yintercept = c(3), linetype = "dashed", color = c("black"))+ylim(0,20)+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))
+
+figure_y
+
+```
+
+```{r}
+nofree_data_all_incline_revised <- subset(average_figure_all_incline, average_figure_all_incline$Study!= "Free")
+
+nofree_data_all_incline_revised <- na.omit(nofree_data_all_incline_revised)
+
+write.csv(nofree_data_all_incline_revised, "nofree_data_all_incline_revised.csv")
+
+average_nofree_all_incline_revised_free <- nofree_data_all_incline_revised %>% 
+  group_by(Incline, Age) %>% summarise_at(vars(Response.Response), list(Response.Response = mean))
+
+stand_incline_nofree <- data.frame(
+  Incline=c("Not Inclined", "Unsure", "Inclined", "Not Inclined", "Unsure", "Inclined"),
+  Age = c("Young", "Young", "Young", "Older", "Older", "Older"),
+  sd=c(.486, .25, .592, .426, 1.01, .33) 
+
+)
+average_nofree_all_incline_revised_free$Incline<-as.character(average_nofree_all_incline_revised_free$Incline)
+average_nofree_all_incline_revised_free[average_nofree_all_incline_revised_free == "0" ] <- "Not Inclined"
+average_nofree_all_incline_revised_free[average_nofree_all_incline_revised_free == "1" ] <- "Unsure"
+average_nofree_all_incline_revised_free[average_nofree_all_incline_revised_free == "2" ] <- "Inclined"
+#average_nofree_all_incline_revised_free[average_nofree_all_incline_revised_free == "3" ] <- "Very Inclined"
+
+write.csv(average_nofree_all_incline_revised_free, "average_nofree_all_incline_revised_free.csv")
+
+average_nofree_all_incline_revised_free <- read.csv("/Users/kyliealberts/Desktop/UCLAstuff/Free Study/average_nofree_all_incline_revised_free.csv")
+
+average_figure_all_incline_nofree<- merge(average_nofree_all_incline_revised_free, stand_incline_nofree, by=c("Incline","Age"))
+
+average_figure_all_incline_nofree$Age <- factor(average_figure_all_incline_nofree$Age, levels = c("Young", "Older"))
+
+average_figure_all_incline_nofree$Incline <- factor(average_figure_all_incline_nofree$Incline, levels = c("Not Inclined", "Unsure", "Inclined"))
+
+ggplot(data=average_figure_all_incline_nofree, aes(x=Age, y=Response.Response, fill=Incline)) +
+geom_bar(stat="identity", color= "black", position=position_dodge())+
+  guides(fill = guide_legend(reverse = FALSE)) +
+  labs(x = "Age", y = "Number of times 'free' was recalled", 
+       title= "Recalling 'free' in No Free Condition") +
+scale_fill_manual(values=c("pink",
+                             "lightblue", "#CBC3E3"))+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))+
+  geom_errorbar(aes(ymin=Response.Response-sd, ymax=Response.Response+sd), width=0.2, colour="black", position=position_dodge(.9)) +
+  ylim(0,6)+
+    geom_hline(yintercept = c(0), linetype = "dashed", color = c("black"))
+nofree_data_all_incline_revised$Incline<-as.character(nofree_data_all_incline_revised$Incline)
+nofree_data_all_incline_revised$Incline[nofree_data_all_incline_revised$Incline == "0" ] <- "Not Inclined"
+nofree_data_all_incline_revised$Incline[nofree_data_all_incline_revised$Incline == "1" ] <- "Unsure"
+nofree_data_all_incline_revised$Incline[nofree_data_all_incline_revised$Incline == "2" ] <- "Inclined"
+
+nofree_data_all_incline_revised_o <- subset(nofree_data_all_incline_revised, nofree_data_all_incline_revised$Age!= "Young") %>% drop_na()
+
+nofree_data_all_incline_revised_y <- subset(nofree_data_all_incline_revised, nofree_data_all_incline_revised$Age!= "Older") %>% drop_na()
+
+
+nofree_data_all_incline_revised_o$Incline <- factor(nofree_data_all_incline_revised_o$Incline, levels = c("Not Inclined", "Unsure", "Inclined"))
+
+nofree_data_all_incline_revised_y$Incline <- factor(nofree_data_all_incline_revised_y$Incline, levels = c("Not Inclined", "Unsure", "Inclined"))
+
+nofree_data_all_incline_revised_o <- nofree_data_all_incline_revised_o %>% drop_na()
+nofree_data_all_incline_revised_y <- nofree_data_all_incline_revised_y %>% drop_na()
+
+
+figure_o_nofree<- ggplot(nofree_data_all_incline_revised_o, aes(x= factor(Incline), y=Response.Response, fill= factor(Incline))) + 
+  geom_violin(trim=FALSE) + scale_fill_manual(values=c("pink",
+                             "lightblue", "#CBC3E3"))+
+  labs(title="Inclined in No Free Study for Older Adults") + geom_jitter(shape=16, position=position_jitter(0.2))+
+  labs(x = "Inclination", y = "Number of times 'free' was recalled", 
+       title= "Recalling 'free' in No Free Condition for Older Adults", fill = "Incline") +
+    geom_hline(yintercept = c(0), linetype = "dashed", color = c("black"))+ylim(0,20)+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))
+
+figure_o_nofree
+
+figure_y_nofree<- ggplot(nofree_data_all_incline_revised_y, aes(x= factor(Incline), y=Response.Response, fill= factor(Incline))) + 
+  geom_violin(trim=FALSE) + scale_fill_manual(values=c("pink",
+                             "lightblue", "#CBC3E3"))+
+  labs(title="Inclined in No Free Study for Young Adults") + geom_jitter(shape=16, position=position_jitter(0.2))+
+  labs(x = "Inclination", y = "Number of times 'free' was recalled", 
+       title= "Recalling 'free' in No Free Condition for Young Adults", fill = "Incline") +
+    geom_hline(yintercept = c(0), linetype = "dashed", color = c("black"))+ylim(0,20)+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))
+
+figure_y_nofree
+```
+
+```{r}
+
+figure_free_i <- read.csv("/Users/kyliealberts/Desktop/UCLAstuff/Free Study/free_data_all_incline_revised_rev.csv")
+
+figure_nofree_i <- read.csv("/Users/kyliealberts/Desktop/UCLAstuff/Free Study/nofree_data_all_incline_revised_rev.csv")
+
+figure_free_all_i <- rbind(figure_free_i, figure_nofree_i)
+
+write.csv(figure_free_all_i, "figure_free_all_i_jam.csv")
+
+#chi square
+
+
+
+
+figure_incline_all <- figure_free_all_i %>% 
+  select(Order.File, Incline, Age) %>% as.data.frame() 
+
+figure_incline_all[figure_incline_all == "0" ] <- "Not inclined"
+figure_incline_all[figure_incline_all == "1"] <- "Unsure"
+figure_incline_all[figure_incline_all == "2"] <- "Inclined"
+
+
+#figure_incline <- transform(figure_incline, Response.Response = as.numeric(Response.Response))
+#as.numeric(figure_free$Response.Response)
+
+figure_incline_all<- mutate(figure_incline_all, 
+                    Sum = ifelse(str_detect(figure_incline_all$Incline, "inc"), "1","1"))
+
+#sum_incline <- figure_incline %>% 
+#  group_by(Order.File, Response.Response) %>% summarize(count_Sum=count(Sum))
+
+figure_incline_all <- transform(figure_incline_all, Sum = as.numeric(Sum))
+
+figure_incline_all<- figure_incline_all %>% 
+  group_by(Order.File, Incline,Age) %>% summarise_at(vars(Sum), list(Sum = sum))
+
+
+
+colnames(figure_incline_all)[colnames(figure_incline_all) == 'Order.File'] <- 'Study'
+#colnames(figure_incline_all)[colnames(figure_incline_all) == 'Incline'] <- 'Type'
+figure_incline_all[figure_incline_all == "procedure_free.csv" ] <- "Free"
+figure_incline_all[figure_incline_all == "procedure.csv"] <- "No Free"
+
+
+
+#figure_incline_sum_all<- merge(figure_incline_all, stand_incline_all, by=c("Type","Study"))
+
+inclined_no_free <- subset(figure_incline_all, figure_incline_all$Study!= "Free")
+
+inclined_no_free$Age <- factor(inclined_no_free$Age, levels = c("Young", "Older"))
+
+inclined_no_free$Incline <- factor(inclined_no_free$Incline, levels = c("Not inclined", "Unsure", "Inclined"))
+
+ggplot(inclined_no_free, aes(fill=Incline, y=Sum, x=Age)) + 
+    geom_bar(position="stack", stat="identity", color= "black")+
+  labs(x = "Age", y = "# of participants who were inclined", 
+       title= "No Free Condition")+scale_fill_manual(values=c("pink",
+                             "lightblue", "#CBC3E3"))+ theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))
+```
+
+```{r}
+inclined_no_free <- subset(figure_incline_all, figure_incline_all$Study!= "No Free")
+
+inclined_no_free$Age <- factor(inclined_no_free$Age, levels = c("Young", "Older"))
+
+inclined_no_free$Incline <- factor(inclined_no_free$Incline, levels = c("Not inclined", "Unsure", "Inclined"))
+
+ggplot(inclined_no_free, aes(fill=Incline, y=Sum, x=Age)) + 
+    geom_bar(position="stack", stat="identity", color= "black")+
+  labs(x = "Age", y = "# of participants who were inclined", 
+       title= "Free Condition")+scale_fill_manual(values=c("pink",
+                             "lightblue", "#CBC3E3"))+ theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))
+```
+
+
+```{r}
+#graph for info
+stand_info_long <- data.frame(
+  Type=c("Name", "Name", "DOB", "DOB", "mail_address", "mail_address", "cc_info", "cc_info"),
+  Study = c("Free", "No Free", "Free", "No Free", "Free", "No Free", "Free", "No Free"),
+  sd=c(.0809,.0710, .0683, .0723, .068, .0588, .0798,.05588) 
+)
+
+#free_data_info_long <- na.omit(free_data_info_long)
+
+free_data_all_info_revised_young <- subset(free_data_all_info_revised, free_data_all_info_revised$agegroup!= "Older")
+
+free_data_all_info_revised_fig <- free_data_all_info_revised_young %>%
+  select(ID, Order.File, Name, DOB, mail_address, cc_info, other)
+
+free_data_all_info_revised_fig[free_data_all_info_revised_fig == "procedure_free.csv" ] <- "Free"
+free_data_all_info_revised_fig[free_data_all_info_revised_fig == "procedure.csv"] <- "No Free"
+
+fig_info_long <- free_data_all_info_revised_fig %>%
+  pivot_longer(
+    cols=c('Name', 'DOB', "mail_address", "cc_info", "other"),
+    names_to = "Type",
+    values_to = "Score")
+
+fig_info_long <- na.omit(fig_info_long)
+
+fig_info_long_sum<- fig_info_long %>% 
+  group_by(Type, Order.File) %>% summarise_at(vars(Score), list(Score = mean))
+
+
+colnames(fig_info_long_sum)[colnames(fig_info_long_sum) == 'Order.File'] <- 'Study'
+
+fig_info_long_sum <- subset(fig_info_long_sum, fig_info_long_sum$Type!= "other")
+
+
+fig_info_long_sum<- merge(fig_info_long_sum, stand_info_long, by=c("Type","Study"))
+
+fig_info_long_sum$Type <- factor(fig_info_long_sum$Type, levels = c("Name", "DOB", "mail_address", "cc_info", "other"))
+fig_info_long_sum$Study <- factor(fig_info_long_sum$Study, levels = c("Free", "No Free"))
+
+figure_info_long_mean <- ggplot(data=fig_info_long_sum, aes(x=Type, y=Score, fill=Study)) +
+geom_bar(stat="identity", color= "black", position=position_dodge())+
+  guides(fill = guide_legend(reverse = FALSE)) +
+  labs(x = "Information", y = "Proportion Correct", 
+       title= "Information") +
+
+  scale_fill_manual(values=c("pink",
+                             "lightblue"))+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))+
+  geom_errorbar(aes(ymin=Score-sd, ymax=Score+sd), width=0.2, colour="black", position=position_dodge(.9)) + ylim(0,1)
+
+figure_info_long_mean
+```
+
+
+```{r}
+#graph for info
+stand_info_long_old <- data.frame(
+  Type=c("Name", "Name", "DOB", "DOB", "mail_address", "mail_address", "cc_info", "cc_info"),
+  Study = c("Free", "No Free", "Free", "No Free", "Free", "No Free", "Free", "No Free"),
+  sd=c(.05,.06, .057, .037, .05, .06, .06,.06) 
+)
+
+#free_data_info_long <- na.omit(free_data_info_long)
+
+free_data_all_info_revised_old <- subset(free_data_all_info_revised, free_data_all_info_revised$agegroup!= "Young")
+
+free_data_all_info_revised_fig_old <- free_data_all_info_revised_old %>%
+  select(ID, Order.File, Name, DOB, mail_address, cc_info, other)
+
+free_data_all_info_revised_fig_old[free_data_all_info_revised_fig_old == "procedure_free.csv" ] <- "Free"
+free_data_all_info_revised_fig_old[free_data_all_info_revised_fig_old == "procedure.csv"] <- "No Free"
+
+fig_info_long_old <- free_data_all_info_revised_fig_old %>%
+  pivot_longer(
+    cols=c('Name', 'DOB', "mail_address", "cc_info", "other"),
+    names_to = "Type",
+    values_to = "Score")
+
+fig_info_long_old <- na.omit(fig_info_long_old)
+
+fig_info_long_sum_old<- fig_info_long_old %>% 
+  group_by(Type, Order.File) %>% summarise_at(vars(Score), list(Score = mean))
+
+
+colnames(fig_info_long_sum_old)[colnames(fig_info_long_sum_old) == 'Order.File'] <- 'Study'
+fig_info_long_sum_old <- subset(fig_info_long_sum_old, fig_info_long_sum_old$Type!= "other")
+
+fig_info_long_sum_old<- merge(fig_info_long_sum_old, stand_info_long_old, by=c("Type","Study"))
+
+fig_info_long_sum_old$Type <- factor(fig_info_long_sum_old$Type, levels = c("Name", "DOB", "mail_address", "cc_info", "other"))
+fig_info_long_sum_old$Study <- factor(fig_info_long_sum_old$Study, levels = c("Free", "No Free"))
+
+
+
+
+figure_info_long_sum_old <- ggplot(data=fig_info_long_sum_old, aes(x=Type, y=Score, fill=Study)) +
+geom_bar(stat="identity", color= "black", position=position_dodge())+
+  guides(fill = guide_legend(reverse = FALSE)) +
+  labs(x = "Information", y = "Proportiong Correct", 
+       title= "Information") +
+
+  scale_fill_manual(values=c("pink",
+                             "lightblue"))+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))+
+  geom_errorbar(aes(ymin=Score-sd, ymax=Score+sd), width=0.2, colour="black", position=position_dodge(.9)) +ylim(0,1)
+
+figure_info_long_sum_old
+```
+```{r}
+fig_info_long$agegroup <- 'Young'
+fig_info_long_old$agegroup <- 'Older'
+
+fig_info_long_jamovi <- rbind(fig_info_long, fig_info_long_old)
+
+#write.csv(fig_info_long_jamovi, "fig_info_long_jamovi_other.csv")
+
+fig_info_long_jamovi <- subset(fig_info_long_jamovi, fig_info_long_jamovi$Type!= "other")
+
+
+```
+
+```{r}
+
+stand_time_hm <- data.frame(
+  Age=c("Young", "Older", "Young", "Older"),
+  Study = c("Free", "Free", "No Free", "No Free"),
+  sd=c(.54,1.27, 1.16, .84) 
+)
+
+
+colnames(free_data_all_hm_revised)[colnames(free_data_all_hm_revised) == 'Order.File'] <- 'Study'
+colnames(free_data_all_hm_revised)[colnames(free_data_all_hm_revised) == 'agegroup'] <- 'Age'
+free_data_all_hm_revised[free_data_all_hm_revised == "procedure_free.csv" ] <- "Free"
+free_data_all_hm_revised[free_data_all_hm_revised == "procedure.csv"] <- "No Free"
+
+free_data_all_hm_revised$Age <- factor(free_data_all_hm_revised$Age, levels = c("Young", "Older"))
+
+free_data_all_hm_revised <- free_data_all_hm_revised %>% 
+   mutate(time = Response.RT / 1000)
+
+free_data_all_hm_revised<- free_data_all_hm_revised %>%
+  select(ID, Study, Procedure.Text, Response.RT, Response.Response, Age, time)
+
+free_data_all_hm_revised <- na.omit(free_data_all_hm_revised)
+
+
+write.csv(free_data_all_hm_revised, "free_data_all_hm_revised_time.csv")
+
+free_data_all_hm_revised_avg<- free_data_all_hm_revised %>% 
+  group_by(Study, Age) %>% summarise_at(vars(time), list(time = mean))
+
+free_data_all_hm_revised_avg<- merge(free_data_all_hm_revised_avg, stand_time_hm, by=c("Age","Study"))
+
+ggplot(data=free_data_all_hm_revised_avg, aes(x=Age, y=time, fill=Study)) +
+geom_bar(stat="identity", color= "black", position=position_dodge())+
+  guides(fill = guide_legend(reverse = FALSE)) +
+  labs(x = "Age", y = "Study Time (s)", 
+       title= "How long the ad was studied for") +
+
+  scale_fill_manual(values=c("pink",
+                             "lightblue"))+
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'))+
+  geom_errorbar(aes(ymin=time-sd, ymax=time+sd), width=0.2, colour="black", position=position_dodge(.9)) 
+
+
+```
+```{r}
+#free_data_all_hm_revised
+free_rt_free <- subset(free_data_all_hm_revised, free_data_all_hm_revised$Study!= "No Free")
+
+write.csv(free_rt_free, "free_rt_free_cloud.csv")
+
+free_rt_free$Age <- factor(free_rt_free$Age, levels = c("Young", "Older"))
+
+free_rt_free <- subset(free_rt_free, free_rt_free$ID!= "24geg8t997")
+free_rt_free <- subset(free_rt_free, free_rt_free$ID!= "h09wf1bh6c")
+
+correlation_free <- ggplot(free_rt_free, aes(x=time, y=Response.Response, color = Age, linetype = Age)) + 
+  geom_smooth(method=lm, se=FALSE)+ geom_point()+
+  labs(x = "Study Time (s)", y = "Number of times 'free' was recalled") +
+  theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'), axis.line.x = element_line(color="black", size = .3), axis.line.y = element_line(color="black", size = .3), axis.ticks.x=element_blank())+
+  guides(color = guide_legend(reverse = FALSE, title = "Age")) + scale_shape_manual(values=c(16,17))+
+  scale_colour_grey(start = 0.6, 
+                  end = 0.0, 
+                  guide_legend(title = "")) +
+#theme_classic() +  +
+  ylim(0,17) 
+
+correlation_free
+
+
+```
+
+```{r}
+#Multiple linear regressions
+#free_rt_free
+free_mlr <- lm(Response.Response ~ Response.RT + Age, data = free_rt_free)
+
+summary(free_mlr)
+```
+
+```{r}
+#free_data_all_hm_revised
+free_rt_nofree <- subset(free_data_all_hm_revised, free_data_all_hm_revised$Study!= "Free")
+write.csv(free_rt_nofree, "free_rt_nofree_cloud.csv")
+
+free_rt_nofree$Age <- factor(free_rt_nofree$Age, levels = c("Young", "Older"))
+
+correlation_nofree <- ggplot(free_rt_nofree, aes(x=time, y=Response.Response, color = Age, linetype = Age)) +
+  geom_smooth(method=lm, se=FALSE)+ geom_point()+
+  labs(x = "Study Time (s)", y = "Number of times 'free' was recalled") + theme(text=element_text(size=16,  family="Times New Roman"), panel.background = element_rect(fill='transparent'), axis.line.x = element_line(color="black", size = .3), axis.line.y = element_line(color="black", size = .3), axis.ticks.x=element_blank())+
+  guides(color = guide_legend(reverse = FALSE, title = "Age")) +scale_shape_manual(values=c(16,17))+
+  scale_colour_grey(start = 0.6, 
+                  end = 0.0, 
+                  guide_legend(title = "")) +
+#theme_classic() +  +
+  ylim(0,17)
+
+
+
+correlation_nofree
+```
+```{r}
+nofree_mlr <- lm(Response.Response ~ Response.RT + Age, data = free_rt_nofree)
+
+summary(nofree_mlr)
+```
+
+
+
+```{r}
+#t-tests
+free_rt_nofree_ <- subset(free_data_all_hm_revised, free_data_all_hm_revised$Study!= "Free")
+t_free_rt_nofree_young <- subset(free_rt_nofree_, free_rt_nofree_$Age!= "Older")
+
+write.csv(t_free_rt_nofree_young, "t_free_rt_nofree_young.csv")
+
+free_rt_free_ <- subset(free_data_all_hm_revised, free_data_all_hm_revised$Study!= "No Free")
+t_free_rt_free_young <- subset(free_rt_free_, free_rt_free_$Age!= "Older")
+
+write.csv(t_free_rt_free_young, "t_free_rt_free_young.csv")
+
+free_rt_nofree_o <- subset(free_data_all_hm_revised, free_data_all_hm_revised$Study!= "Free")
+t_free_rt_nofree_o <- subset(free_rt_nofree_o, free_rt_nofree_$Age!= "Young")
+
+write.csv(t_free_rt_nofree_o, "t_free_rt_nofree_o.csv")
+
+free_rt_free_o <- subset(free_data_all_hm_revised, free_data_all_hm_revised$Study!= "No Free")
+t_free_rt_free_o <- subset(free_rt_free_o, free_rt_free_$Age!= "Young")
+
+write.csv(t_free_rt_free_o, "t_free_rt_free_o.csv")
+
+#exclusion
+free_data_all_hm_revised_ex <- read.csv("/Users/kyliealberts/Desktop/UCLAstuff/Free Study/free_data_all_cloud_howmany_ex.csv")
+
+colnames(free_data_all_hm_revised_ex)[colnames(free_data_all_hm_revised_ex) == 'Order.File'] <- 'Study'
+colnames(free_data_all_hm_revised_ex)[colnames(free_data_all_hm_revised_ex) == 'agegroup'] <- 'Age'
+free_data_all_hm_revised_ex[free_data_all_hm_revised_ex == "procedure_free.csv" ] <- "Free"
+free_data_all_hm_revised_ex[free_data_all_hm_revised_ex == "procedure.csv"] <- "No Free"
+
+#t-tests with exclusion
+free_rt_nofree_ex <- subset(free_data_all_hm_revised_ex, free_data_all_hm_revised_ex$Study!= "Free")
+t_free_rt_nofree_young_ex <- subset(free_rt_nofree_ex, free_rt_nofree_ex$Age!= "Older")
+
+write.csv(t_free_rt_nofree_young_ex, "t_free_rt_nofree_young_ex.csv")
+
+free_rt_free_ex <- subset(free_data_all_hm_revised_ex, free_data_all_hm_revised_ex$Study!= "No Free")
+t_free_rt_free_young_ex <- subset(free_rt_free_, free_rt_free_$Age!= "Older")
+
+write.csv(t_free_rt_free_young_ex, "t_free_rt_free_young_ex.csv")
+
+free_rt_nofree_o_ex <- subset(free_data_all_hm_revised_ex, free_data_all_hm_revised_ex$Study!= "Free")
+t_free_rt_nofree_o_ex <- subset(free_rt_nofree_o_ex, free_rt_nofree_ex$Age!= "Young")
+
+write.csv(t_free_rt_nofree_o_ex, "t_free_rt_nofree_o_ex.csv")
+
+free_rt_free_o_ex <- subset(free_data_all_hm_revised_ex, free_data_all_hm_revised_ex$Study!= "No Free")
+t_free_rt_free_o_ex <- subset(free_rt_free_o_ex, free_rt_free_ex$Age!= "Young")
+
+write.csv(t_free_rt_free_o_ex, "t_free_rt_free_o_ex.csv")
+```
+
+
+
